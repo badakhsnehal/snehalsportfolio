@@ -1,0 +1,33 @@
+# Import libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, classification_report
+
+# Step 1: Load dataset
+# CSV should have columns: "text" and "label"
+data = pd.read_csv("news_data.csv")   # 👈 replace with your actual CSV name
+print(data.head())
+
+# Step 2: Separate features and labels
+X = data["text"]      # text sentences
+y = data["label"]     # categories (Technology, Sports, Politics, Entertainment)
+
+# Step 3: Convert text into numeric features (bag of words)
+vectorizer = CountVectorizer()
+X_vectorized = vectorizer.fit_transform(X)
+
+# Step 4: Split data into training and testing
+X_train, X_test, y_train, y_test = train_test_split(X_vectorized, y, test_size=0.2, random_state=42)
+
+# Step 5: Create and train the Naive Bayes model
+model = MultinomialNB()
+model.fit(X_train, y_train)
+
+# Step 6: Predict on test data
+y_pred = model.predict(X_test)
+
+# Step 7: Evaluate performance
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
